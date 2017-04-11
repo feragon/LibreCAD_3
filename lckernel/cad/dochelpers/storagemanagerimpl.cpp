@@ -99,3 +99,7 @@ DocumentMetaType_CSPtr StorageManagerImpl::_metaDataTypeByName(const std::string
     }
     return nullptr;
 }
+
+Class_CSPtr StorageManagerImpl::classByName(const std::string& className) const {
+    return metaDataTypeByName<Class>(className);
+}

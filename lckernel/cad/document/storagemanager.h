@@ -7,6 +7,7 @@
 #include <cad/functions/string_helper.h>
 #include <map>
 #include <cad/meta/dxflinepattern.h>
+#include <cad/meta/class.h>
 
 namespace lc {
     /**
@@ -36,6 +37,13 @@ namespace lc {
              * \return
              */
             virtual DxfLinePattern_CSPtr linePatternByName(const std::string& linePatternName) const = 0;
+
+            /**
+             * @brief Return a class by its name
+             * @param className Name of the class
+             * @return lc:Class
+             */
+            virtual Class_CSPtr classByName(const std::string& className) const = 0;
             /*!
              * \brief Returns all the layers present in the document.
              * \return Hash Layername, Layer

@@ -39,6 +39,7 @@ lckernel/geometry/testgeocircle.cpp
 lckernel/functions/testintersect.cpp
 lckernel/math/testmatrices.cpp
 lckernel/geometry/beziertest.cpp
+lckernel/meta/class.cpp
 lcviewernoqt/testselection.cpp
 )
 

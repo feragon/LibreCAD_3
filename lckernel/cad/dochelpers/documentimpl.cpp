@@ -143,3 +143,11 @@ DxfLinePattern_CSPtr DocumentImpl::linePatternByName(const std::string& linePatt
 std::vector<DxfLinePattern_CSPtr> DocumentImpl::linePatterns() const {
     return _storageManager->metaTypes<const DxfLinePattern>();
 }
+
+std::vector<Class_CSPtr> DocumentImpl::allClasses() const {
+    return _storageManager->metaTypes<const Class>();
+}
+
+Class_CSPtr DocumentImpl::classByName(const std::string& className) const {
+    return _storageManager->classByName(className);
+}

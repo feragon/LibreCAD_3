@@ -41,6 +41,17 @@ namespace lc {
              * @brief return all line patterns
              */
             virtual std::vector<DxfLinePattern_CSPtr> linePatterns() const;
+
+            /**
+             * @brief return all Classes
+             */
+            std::vector<Class_CSPtr> allClasses() const override;
+
+            /**
+             * @brief Return a class by its name
+             */
+            Class_CSPtr classByName(const std::string& className) const override;
+
         protected:
             /*!
              * \brief execute's a operation

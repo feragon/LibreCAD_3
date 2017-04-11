@@ -63,6 +63,7 @@ cad/primitive/lwpolyline.cpp
 cad/primitive/beziercurve.cpp
 cad/primitive/image.cpp
 cad/math/helpermethods.cpp
+cad/meta/class.cpp
 )
 
 # HEADER FILES
@@ -145,7 +146,8 @@ cad/functions/string_helper.h
 cad/primitive/beziercurve.h
 cad/primitive/image.h
 cad/math/helpermethods.h
-version.h version.h)
+version.h
+cad/meta/class.h)
 
 # LOG4CXX
 find_package(Log4CXX 1.10 REQUIRED)

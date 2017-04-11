@@ -11,6 +11,7 @@
 #include <cad/events/addlayerevent.h>
 #include <cad/events/removelayerevent.h>
 #include <cad/events/replacelayerevent.h>
+#include <cad/meta/class.h>
 #include "cad/meta/dxflinepattern.h"
 
 #include "cad/events/beginprocessevent.h"
@@ -199,6 +200,16 @@ namespace lc {
              * @brief return all line patterns
              */
             virtual std::vector<DxfLinePattern_CSPtr> linePatterns() const = 0;
+
+            /**
+             * @brief return all Classes
+             */
+             virtual std::vector<Class_CSPtr> allClasses() const = 0;
+
+            /**
+             * @brief Return a class by its name
+             */
+             virtual Class_CSPtr classByName(const std::string& className) const = 0;
         public:
             friend class lc::operation::DocumentOperation;
 

@@ -79,6 +79,13 @@ namespace lc {
             virtual DxfLinePattern_CSPtr linePatternByName(const std::string& linePatternName) const;
 
             /**
+             * @brief Return a class by its name
+             * @param className Name of the class
+             * @return lc:Class
+             */
+            Class_CSPtr classByName(const std::string& className) const override;
+
+            /**
              * @brief return all Layers
              * @return map<string, Layer_CSPtr>
              */

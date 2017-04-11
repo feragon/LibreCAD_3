@@ -16,6 +16,9 @@
 #include <cad/base/metainfo.h>
 #include <cad/meta/icolor.h>
 #include <tuple>
+#include <drw_classes.h>
+#include <cad/meta/class.h>
+
 static const char *const SKIP_BYLAYER = "BYLAYER";
 static const char *const SKIP_CONTINUOUS = "CONTINUOUS";
 
@@ -78,6 +81,7 @@ class DXFimpl : public DRW_Interface {
         virtual void addImage(const DRW_Image *data) override;
         virtual void setBlock(const int handle) override;
         virtual void endBlock() override;
+        virtual void addClass(const DRW_Class& c) override;
 
 
         // WRITE FUNCTIONALITY
@@ -86,6 +90,7 @@ class DXFimpl : public DRW_Interface {
         virtual void writeHeader(DRW_Header &data) override { }
         virtual void writeBlocks() override { }
         virtual void writeBlockRecords() override { }
+        virtual void writeClasses() override;
         virtual void writeEntities() override;
         virtual void writeLTypes() override;
         virtual void writeLayers() override;
@@ -107,6 +112,7 @@ class DXFimpl : public DRW_Interface {
         void writeImage(const lc::entity::Image_CSPtr i);
         void writeText(const lc::entity::Text_CSPtr t);
 
+        virtual void writeClass(const lc::Class_CSPtr cl);
         void writeLayer(const std::shared_ptr<const lc::Layer> layer);
 
         // UTILITIES FUNCTIONS

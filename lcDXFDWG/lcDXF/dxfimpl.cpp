@@ -23,6 +23,7 @@
 #include <cad/meta/metalinewidth.h>
 #include <cad/meta/dxflinepattern.h>
 #include <cad/functions/string_helper.h>
+#include <cad/meta/class.h>
 
 DXFimpl::DXFimpl(std::shared_ptr<lc::Document> document, lc::operation::Builder_SPtr builder) : _document(document), _builder(builder), _blockHandle(-1) {
     _intToLineWidth[0] = std::make_shared<lc::MetaLineWidthByValue>(0.00);
@@ -467,6 +468,12 @@ void DXFimpl::linkImage(const DRW_ImageDef *data) {
     }
 }
 
+void DXFimpl::addClass(const DRW_Class& c) {
+    auto lcClass = std::make_shared<lc::Class>(c.recName, c.className, c.appName,
+                                 c.proxyFlag, c.instanceCount, (bool) c.wasaProxyFlag, (bool) c.entityFlag);
+
+    _document->addDocumentMetaType(lcClass);
+}
 
 /*********************************************
  * Write DXF Implementation BELOW
@@ -1004,6 +1011,27 @@ void DXFimpl::writeEntity(lc::entity::CADEntity_CSPtr entity) {
     //     writeEllipse(ellipse);
     //     return;
     // }
+}
+
+void DXFimpl::writeClasses() {
+    auto classes = _document->allClasses();
+
+    for(auto c : classes) {
+        writeClass(c);
+    }
+}
+
+void DXFimpl::writeClass(const lc::Class_CSPtr cl) {
+    DRW_Class dxfClass;
+    dxfClass.appName = cl->applicationName();
+    dxfClass.entityFlag = cl->entityFlag();
+    dxfClass.wasaProxyFlag = cl->wasAProxy();
+    dxfClass.instanceCount = cl->instanceCount();
+    dxfClass.className = cl->cppClass();
+    dxfClass.recName = cl->className();
+    dxfClass.proxyFlag = cl->flags();
+
+    dxfW->writeClass(&dxfClass);
 }
 
 
