@@ -126,9 +126,30 @@ int main(int argc, char** argv) {
     }
 
     // Create Librecad document
+    LcPainter* lcPainter = nullptr;
+    using namespace CairoPainter;
+
     auto _storageManager = std::make_shared<lc::StorageManagerImpl>();
     auto _document = std::make_shared<lc::DocumentImpl>(_storageManager);
-    auto _canvas = std::make_shared<DocumentCanvas>(_document);
+    auto _canvas = std::make_shared<DocumentCanvas>(_document, [&](const unsigned int width, const unsigned int height) {
+
+        if (lcPainter == nullptr) {
+            if (fType == "pdf")
+                lcPainter = new LcCairoPainter<backend::PDF>(width, height, &write_func);
+            else if (fType == "svg")
+                lcPainter = new LcCairoPainter<backend::SVG>(width, height, &write_func);
+                // cairo can print any surface to PNG
+            else
+                lcPainter = new LcCairoPainter<backend::SVG>(width, height, nullptr);
+        }
+
+        return lcPainter;
+    }, [&](LcPainter* painter) {
+        if (painter != nullptr && lcPainter != nullptr) {
+            delete painter;
+            lcPainter = nullptr;
+        }
+    });
 
     // Add backround
     auto _gradientBackground = std::make_shared<GradientBackground>(lc::Color(0x90, 0x90, 0x90),
@@ -143,33 +164,6 @@ int main(int argc, char** argv) {
 
     std::transform(fType.begin(), fType.end(), fType.begin(), ::tolower);
     ofile.open(fOut);
-
-    using namespace CairoPainter;
-
-    LcPainter* lcPainter = nullptr;
-
-    _canvas->createPainterFunctor(
-            [&](const unsigned int width, const unsigned int height) {
-
-                if (lcPainter == nullptr) {
-                    if (fType == "pdf")
-                        lcPainter = new LcCairoPainter<backend::PDF>(width, height, &write_func);
-                    else if (fType == "svg")
-                        lcPainter = new LcCairoPainter<backend::SVG>(width, height, &write_func);
-                        // cairo can print any surface to PNG
-                    else
-                        lcPainter = new LcCairoPainter<backend::SVG>(width, height, nullptr);
-                }
-
-                return lcPainter;
-            });
-
-    _canvas->deletePainterFunctor([&](LcPainter* painter) {
-        if (painter != nullptr && lcPainter != nullptr) {
-            delete painter;
-            lcPainter = nullptr;
-        }
-    });
 
     // Set device width/height
     _canvas->newDeviceSize(width, height);

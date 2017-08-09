@@ -17,7 +17,6 @@ void Grid::draw(DrawEvent const & event) const {
     const lc::geo::Area &updateRect = event.updateRect();
 
     painter.save();
-    painter.disable_antialias();
     double zeroCornerX = 0.;
     double zeroCornerY = 0.;
     painter.device_to_user(&zeroCornerX, &zeroCornerY);

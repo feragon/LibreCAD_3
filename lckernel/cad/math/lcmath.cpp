@@ -58,7 +58,7 @@ double Math::getAngleDifference(double start, double end, bool CCW) {
         d = 2. * M_PI - std::abs(d);
     }
 
-    if (!CCW) {
+    if (!CCW && d < 2.* M_PI) {
         d = 2.* M_PI - d;
     }
 

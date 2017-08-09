@@ -21,16 +21,13 @@
 static const double MINIMUM_READER_LINEWIDTH = 1.0;
 namespace LCViewer {
 
-enum PainterCacheType {
-    VIEWER_BACKGROUND,
-    VIEWER_DOCUMENT,
-    VIEWER_DRAWING
-};
-
-
 class DocumentCanvas : public std::enable_shared_from_this<DocumentCanvas> {
     public:
-        DocumentCanvas(std::shared_ptr<lc::Document> document);
+        DocumentCanvas(std::shared_ptr<lc::Document> document,
+                       const std::function<LcPainter *(const unsigned int, const unsigned int)>& createPainterFunctor = nullptr,
+                       const std::function<void(LcPainter*)>& deletePainterFunctor = nullptr
+        );
+
         virtual ~DocumentCanvas();
 
         /**
@@ -97,29 +94,6 @@ class DocumentCanvas : public std::enable_shared_from_this<DocumentCanvas> {
         void newDeviceSize(unsigned int width, unsigned int hight);
 
         /**
-         * Remove all painter's
-         * This can be usefull if your viewer that uses the document canvas get's deleted before
-         * it will delete the canvas itself. This can happen if your UI layer claim's ownership
-         * and you don't have the chance to control order of destruction of objects.
-         */
-        void removePainters();
-
-        /**
-         * @brief createPainterFunctor
-         * is called each time a new LcPainter is required. The underlaying implementation allow's you to decide
-         * into what the document get's painted.
-         * @param createPainterFunctor
-         */
-        void createPainterFunctor(const std::function<LcPainter *(const unsigned int, const unsigned int)>& createPainterFunctor);
-
-        /**
-         * @brief deletePainterFunctor
-         * called when the LcPainter is no longer needed
-         * @param deletePainterFunctor
-         */
-        void deletePainterFunctor(const std::function<void(LcPainter*)>& deletePainterFunctor);
-
-        /**
          * @brief bounds
          * return the opproximate size of the current document
          * @return
@@ -182,9 +156,8 @@ class DocumentCanvas : public std::enable_shared_from_this<DocumentCanvas> {
          * some matrix calculations done.
          */
         void device_to_user(double *x, double *y) const {
-            if (_cachedPainters.size()>0) {
-                std::map<PainterCacheType, LcPainter *>::const_iterator painter = _cachedPainters.begin();
-                painter->second->device_to_user(x, y);
+            if (_painter) {
+                _painter->device_to_user(x, y);
             }
         }
 
@@ -203,16 +176,8 @@ class DocumentCanvas : public std::enable_shared_from_this<DocumentCanvas> {
          * Return CADEntity as LCVDrawItem
          */
         static LCVDrawItem_SPtr asDrawable(lc::entity::CADEntity_CSPtr entity);
-private:
-        /**
-         * @brief cachedPainter
-         * fetch a painter, if no painter was found or the painter's size doesn't match anymore
-         * with the device size the old painter will request adestruction through deletePainterFunctor and
-         * a new painter will be created through  createPainterFunctor
-         * @param cacheType
-         * @return
-         */
-        LcPainter& cachedPainter(PainterCacheType cacheType);
+    private:
+        LcPainter* _painter;
 
         void on_addEntityEvent(const lc::AddEntityEvent&);
         void on_removeEntityEvent(const lc::RemoveEntityEvent&);
@@ -241,9 +206,6 @@ private:
         // Two functor's that allow creation and destruction of painters
         std::function<LcPainter *(const unsigned int, const unsigned int)> _createPainterFunctor;
         std::function<void(LcPainter*)> _deletePainterFunctor;
-
-        // Painters
-        std::map<PainterCacheType, LcPainter*> _cachedPainters;
 
         // Maximum and minimum allowed scale factors
         double _zoomMin;

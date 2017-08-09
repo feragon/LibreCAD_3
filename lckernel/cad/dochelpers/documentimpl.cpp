@@ -18,7 +18,7 @@ DocumentImpl::~DocumentImpl() {
 
 void DocumentImpl::execute(operation::DocumentOperation_SPtr operation) {
     {
-        std::lock_guard<std::mutex> lck(_documentMutex);
+        //std::lock_guard<std::mutex> lck(_documentMutex);
         begin(operation);
         this->operationProcess(operation);
         commit(operation);

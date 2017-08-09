@@ -40,6 +40,7 @@ drawables/dragpoints.cpp
 drawables/tempentities.cpp
 drawables/CursorLocation.cpp
 drawitems/lcvinsert.cpp
+painters/openglpainter.cpp
 )
 
 # HEADER FILES
@@ -85,6 +86,7 @@ events/dragpointsevent.h
 drawables/tempentities.h
 drawables/CursorLocation.h
 drawitems/lcvinsert.h
+painters/openglpainter.h
 )
 
 # Cairo
@@ -112,6 +114,10 @@ include_directories(${GDK-PIXBUF_INCLUDE_DIRS})
 find_package(GDK REQUIRED)
 include_directories(${GDK_INCLUDE_DIRS})
 
+#OpenGL
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
 # BUILDING CONFIG
 # SEPERATE BUILDING FLAG
 set(SEPARATE_BUILD OFF)
@@ -127,4 +133,4 @@ else ()
 endif ()
 
 add_library(lcviewernoqt SHARED ${viewer_srcs} ${viewer_hdrs})
-target_link_libraries(lcviewernoqt ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${GDK-PIXBUF_LIBRARIES} ${GDK_LIBRARIES} lckernel)
+target_link_libraries(lcviewernoqt ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${GDK-PIXBUF_LIBRARIES} ${GDK_LIBRARIES} ${OPENGL_LIBRARY} lckernel)

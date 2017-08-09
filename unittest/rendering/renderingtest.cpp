@@ -41,7 +41,20 @@ void render(const std::string& dxf, const std::string& output, unsigned int imag
             int x, int y, int w, int h) {
     auto _storageManager = std::make_shared<lc::StorageManagerImpl>();
     auto _document = std::make_shared<lc::DocumentImpl>(_storageManager);
-    auto _canvas = std::make_shared<LCViewer::DocumentCanvas>(_document);
+
+    LcPainter* lcPainter = nullptr;
+    auto _canvas = std::make_shared<LCViewer::DocumentCanvas>(_document, [&](const unsigned int width, const unsigned int height) {
+        if (lcPainter == nullptr) {
+            lcPainter = new LcCairoPainter<CairoPainter::backend::SVG>(imageWidth, imageHeight, nullptr);
+        }
+
+        return lcPainter;
+    }, [&](LcPainter* painter) {
+        if (painter != nullptr && lcPainter != nullptr) {
+            delete painter;
+            lcPainter = nullptr;
+        }
+    });
 
     // Add backround
     auto _gradientBackground = std::make_shared<GradientBackground>(
@@ -49,24 +62,6 @@ void render(const std::string& dxf, const std::string& output, unsigned int imag
             lc::Color(0x00, 0x00, 0x00)
     );
     _canvas->background().connect<GradientBackground, &GradientBackground::draw>(_gradientBackground.get());
-
-    LcPainter* lcPainter = nullptr;
-    _canvas->createPainterFunctor(
-            [&](const unsigned int width, const unsigned int height) {
-                if (lcPainter == nullptr) {
-                    lcPainter = new LcCairoPainter<CairoPainter::backend::SVG>(imageWidth, imageHeight, nullptr);
-                }
-
-                return lcPainter;
-            }
-    );
-
-    _canvas->deletePainterFunctor([&](LcPainter* painter) {
-        if (painter != nullptr && lcPainter != nullptr) {
-            delete painter;
-            lcPainter = nullptr;
-        }
-    });
 
     _canvas->newDeviceSize(imageWidth, imageHeight);
 

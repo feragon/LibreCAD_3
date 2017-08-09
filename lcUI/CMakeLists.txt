@@ -102,6 +102,10 @@ find_package(Lua 5.2 REQUIRED)
 include_directories(${LUA_INCLUDE_DIR})
 link_directories(${LUA_LIBRARIES})
 
+#OpenGL
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
 # BUILDING CONFIG
 # SEPERATE BUILDING FLAG
 set(SEPARATE_BUILD OFF)
@@ -135,7 +139,9 @@ set(EXTRA_LIBS
         Qt5::Widgets
         Qt5::UiTools
         ${LOG4CXX_LIBRARIES}
-        ${APR_LIBRARIES})
+        ${APR_LIBRARIES}
+        ${OPENGL_LIBRARY}
+)
 
 #Create library for unit tests
 if(WITH_UNITTESTS)

@@ -22,8 +22,6 @@ CadMdiChild::CadMdiChild(QWidget* parent) :
         this->setObjectName(QStringLiteral("CadMdiChild"));
     }
 
-    this->resize(1078, 736);
-
     QGridLayout* gridLayout = new QGridLayout(this);
     gridLayout->setHorizontalSpacing(0);
     gridLayout->setVerticalSpacing(0);
@@ -44,12 +42,9 @@ CadMdiChild::CadMdiChild(QWidget* parent) :
     _viewer = new LCADViewer(this);
     _viewer->setObjectName(QStringLiteral("viewer"));
     _viewer->setGeometry(QRect(50, 30, 581, 401));
-    _viewer->setAutoFillBackground(true);
-    _viewer->setContextMenuPolicy(Qt::CustomContextMenu);
-    _viewer->setFocusPolicy(Qt::StrongFocus);
     connect(_viewer, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(ctxMenu(const QPoint&)));
 
-    gridLayout->addWidget(_viewer, 0, 0, 1, 1);
+    gridLayout->addWidget(QWidget::createWindowContainer(_viewer, this), 0, 0, 1, 1);
 
     horizontalScrollBar->setMinimum(-1000);
     horizontalScrollBar->setMaximum(1000);
@@ -62,6 +57,8 @@ CadMdiChild::CadMdiChild(QWidget* parent) :
             _viewer, SLOT(setHorizontalOffset(int)));
     connect(verticalScrollBar, SIGNAL(valueChanged(int)),
             _viewer, SLOT(setVerticalOffset(int)));
+
+    this->resize(1078, 736);
 }
 
 CadMdiChild::~CadMdiChild() {

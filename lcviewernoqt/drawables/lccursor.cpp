@@ -26,11 +26,12 @@ void Cursor::onDraw(DrawEvent const & event) const {
     double zeroCornerY = 0.;
     event.painter().device_to_user(&zeroCornerX, &zeroCornerY);
 
-    double gridSPacingX = _cursorSize;
-    double gridSPacingY = _cursorSize;
-    event.painter().device_to_user(&gridSPacingX, &gridSPacingY);
+    double cursorEndX = _cursorSize;
+    double cursorEndY = _cursorSize;
+    event.painter().device_to_user(&cursorEndX, &cursorEndY);
 
-    double minDistancePoints = (gridSPacingX - zeroCornerX) / 2.0;
+    double cursorSizeX = (cursorEndX - zeroCornerX) / 2.0;
+    double cursorSizeY = (cursorEndY - zeroCornerY) / 2.0;
 
     double x=0, y=0;
 
@@ -45,16 +46,15 @@ void Cursor::onDraw(DrawEvent const & event) const {
     }
 
     event.painter().save();
-    event.painter().disable_antialias();
 
-    event.painter().move_to(-minDistancePoints + x, y);
-    event.painter().line_to(minDistancePoints + x, y);
     event.painter().source_rgba(_xAxisColor.red(), _xAxisColor.green(), _xAxisColor.blue(), _xAxisColor.alpha());
+    event.painter().move_to(-cursorSizeX + x, y);
+    event.painter().line_to(cursorSizeX + x, y);
     event.painter().stroke();
 
-    event.painter().move_to(x, -minDistancePoints + y);
-    event.painter().line_to(x, minDistancePoints + y);
     event.painter().source_rgba(_yAxisColor.red(), _yAxisColor.green(), _yAxisColor.blue(), _yAxisColor.alpha());
+    event.painter().move_to(x, -cursorSizeY + y);
+    event.painter().line_to(x, cursorSizeY + y);
     event.painter().stroke();
 
     /** Cursor added temprary untill we have a better system for this **/

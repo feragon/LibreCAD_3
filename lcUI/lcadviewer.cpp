@@ -1,57 +1,44 @@
 #include "lcadviewer.h"
-#include "documentcanvas.h"
-
-#include <map>
-
 #include <QtGui>
 #include <QVBoxLayout>
-#include <QPushButton>
-#include <QTime>
-
-#include <cad/dochelpers/entitycontainer.h>
-
-#include <managers/snapmanager.h>
+#include <painters/openglpainter.h>
 
 using namespace LCViewer;
 
 LCADViewer::LCADViewer(QWidget *parent) :
-    QWidget(parent), _docCanvas(nullptr), _mouseScrollKeyActive(false), _operationActive(false), _scale(1.0), _zoomMin(0.05), _zoomMax(20.0), _scaleLineWidth(false) {
+    QOpenGLWindow(),
+    _docCanvas(nullptr),
+    _mouseScrollKeyActive(false),
+    _operationActive(false),
+    _scale(1.0),
+    _zoomMin(0.05),
+    _zoomMax(20.0),
+    _scaleLineWidth(false) {
 
-    setMouseTracking(true);
+    setSurfaceType(QWindow::OpenGLSurface);
+    QSurfaceFormat format;
+    format.setSamples(4);
+    setFormat(format);
+
     this->_altKeyActive = false;
     this->_ctrlKeyActive = false;
 	setCursor(Qt::BlankCursor);
 }
 
 LCADViewer::~LCADViewer() {
-    // Remove the painters here because this object get's deleted before the document
-    _docCanvas->removePainters();
     _document->commitProcessEvent().disconnect<LCADViewer, &LCADViewer::on_commitProcessEvent>(this);
 }
 
 
 void LCADViewer::setDocument(std::shared_ptr<lc::Document> document) {
-    _docCanvas = std::make_shared<DocumentCanvas>(document);
+    _docCanvas = std::make_shared<DocumentCanvas>(document, [] (const unsigned int width, const unsigned int height) {
+        return new LCViewer::OpenGLPainter(width, height);
+    }, [this] (LcPainter * painter) {
+        delete painter;
+    });
+
     _document = document;
     _document->commitProcessEvent().connect<LCADViewer, &LCADViewer::on_commitProcessEvent>(this);
-
-    _docCanvas->createPainterFunctor(
-    [this](const unsigned int width, const unsigned int height) {
-        QImage *m_image = new QImage(width, height, QImage::Format_ARGB32);
-        LcPainter* lcPainter = createCairoImagePainter(m_image->bits(), width, height);
-        imagemaps.insert(std::make_pair(lcPainter, m_image));
-        return lcPainter;
-    });
-
-    _docCanvas->deletePainterFunctor([this]
-    (LcPainter * painter) {
-        // If you get a exception here and you are destroying this object, you migth need to call _docCanvas->removePainters();
-        // in your destructor
-        QImage *m_image = imagemaps.at(painter);
-        delete painter;
-        delete m_image;
-        imagemaps.erase(painter);
-    });
 
     _docCanvas->newDeviceSize(size().width(), size().height());
 
@@ -78,7 +65,7 @@ void LCADViewer::on_commitProcessEvent(const lc::CommitProcessEvent &) {
   */
 void LCADViewer::keyPressEvent(QKeyEvent *event) {
 
-    QWidget::keyPressEvent(event);
+    QWindow::keyPressEvent(event);
 
     switch (event->key()) {
         case Qt::Key_Shift:
@@ -99,7 +86,7 @@ void LCADViewer::keyPressEvent(QKeyEvent *event) {
 }
 
 void LCADViewer::keyReleaseEvent(QKeyEvent *event) {
-    QWidget::keyReleaseEvent(event);
+    QWindow::keyReleaseEvent(event);
 
     switch (event->key()) {
         case Qt::Key_Shift:
@@ -149,7 +136,7 @@ void LCADViewer::setHorizontalOffset(int v) {
 
 
 void LCADViewer::mouseMoveEvent(QMouseEvent *event) {
-    QWidget::mouseMoveEvent(event);
+    QWindow::mouseMoveEvent(event);
 
     _snapManager->setDeviceLocation(event->pos().x(), event->pos().y());
     _dragManager->onMouseMove();
@@ -175,7 +162,7 @@ void LCADViewer::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void LCADViewer::mousePressEvent(QMouseEvent *event) {
-    QWidget::mousePressEvent(event);
+    QWindow::mousePressEvent(event);
 
     startSelectPos = event->pos();
 
@@ -216,9 +203,9 @@ void LCADViewer::mouseReleaseEvent(QMouseEvent *event) {
         case Qt::MiddleButton: {
             _mouseScrollKeyActive = false;
         } break;
-        
+
         default: {
-            
+
         } break;
     }
 
@@ -241,19 +228,19 @@ void LCADViewer::setOperationActive(bool operationActive) {
     }
 }
 
-void LCADViewer::paintEvent(QPaintEvent *p) {
-    if (p->rect().width() == 0 || p->rect().height() == 0) {
-        return;
-    }
+void LCADViewer::initializeGL() {
+    resizeGL(QWindow::width(), QWindow::height());
+}
 
-    QPainter painter(this);
-    _docCanvas->render([&](LcPainter & lcPainter) {
-        lcPainter.clear(1., 1., 1., 0.0);
+void LCADViewer::resizeGL(int w, int h) {
+    _docCanvas->newDeviceSize(w, h);
+}
 
-    }, [&](LcPainter & lcPainter) {
-        QImage *i = imagemaps.at(&lcPainter);
-        painter.drawImage(QPoint(0, 0), *i);
-
-    });
-    painter.end();
+void LCADViewer::paintGL() {
+    _docCanvas->render(
+            [] (LcPainter& painter) {
+                painter.clear(0, 0, 0);
+            },
+            [] (LcPainter& painter) {}
+    );
 }
