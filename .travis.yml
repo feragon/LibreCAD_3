@@ -1,0 +1,34 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      compiler: gcc
+      addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - qtbase5-dev
+          - liblua5.2-dev
+          - libcairo2-dev
+          - liblog4cxx10-dev
+          - libpango1.0-dev
+          - libboost-all-dev
+          - libqt5svg5-dev
+          - libgtest-dev
+          - libeigen3-dev
+          - libcurl4-gnutls-dev
+          - gcc-4.9
+          - g++-4.9
+
+before_install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+
+script:
+  - mkdir -p build
+  - cd build
+  - cmake ..
+  - make
