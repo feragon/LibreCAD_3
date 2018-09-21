@@ -29,5 +29,6 @@
         <file alias="snap_endpoints.svg">icons/snap_endpoints.svg</file>
         <file alias="snap_entity.svg">icons/snap_entity.svg</file>
         <file alias="snap_grid.svg">icons/snap_grid.svg</file>
+        <file alias="line_tangent_pc.svg">icons/line_tangent_pc.svg</file>
     </qresource>
 </RCC>

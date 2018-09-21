@@ -1,6 +1,7 @@
 #include <cad/meta/color.h>
 #include <vector>
 #include <cad/interface/metatype.h>
+#include <cad/math/tangent.h>
 #include <cad/meta/layer.h>
 #include <cad/meta/metacolor.h>
 #include <cad/base/metainfo.h>
@@ -704,6 +705,10 @@ void LCLua::importLCKernel() {
             .addConstructor(LUA_ARGS(const geo::Coordinate&, int))
             .addFunction("coordinate", &EntityCoordinate::coordinate)
             .addFunction("pointId", &EntityCoordinate::pointId)
-        .endClass()       
+        .endClass()
+
+        .beginClass<lc::math::Tangent>("Tangent")
+            .addStaticFunction("lineTangent", &math::Tangent::lineTangent)
+        .endClass()
         ;
 }

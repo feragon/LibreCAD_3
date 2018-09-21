@@ -59,6 +59,10 @@ function add_toolbar(mainWindow, id, linePatternSelect, lineWidthSelect, colorSe
     quickAccessTab:addWidget(creationGroup, lineButton, 0, 0, 1, 1)
     luaInterface:luaConnect(lineButton, "pressed()", function() run_basic_operation(id, LineOperations) end)
 
+    local tangentLineButton = create_button("", ":/icons/line_tangent_pc.svg")
+    quickAccessTab:addWidget(creationGroup, tangentLineButton, 3, 0, 1, 1)
+    luaInterface:luaConnect(tangentLineButton, "pressed()", function() run_basic_operation(id, TangentLineOperations) end)
+
     local circleButton = create_button("", ":/icons/circle.svg")
     quickAccessTab:addWidget(creationGroup, circleButton, 1, 0, 1, 1)
     luaInterface:luaConnect(circleButton, "pressed()", function() run_basic_operation(id, CircleOperations) end)
