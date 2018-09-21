@@ -4,12 +4,12 @@
 #include "geocoordinate.h"
 #include "geobase.h"
 #include <vector>
-#include <cad/interface/tangentable.h>
 #include "cad/math/equation.h"
+
 namespace lc {
     namespace geo {
         // TODO: Should Circle be a arc with a start angle of 0 and a stop angle of 2PI ?
-        class Circle : public Base, virtual public Visitable, public Tangentable {
+        class Circle : public Base, virtual public Visitable {
             public:
                 Circle(Coordinate center, double radius);
 
@@ -42,8 +42,6 @@ namespace lc {
                 }
 
                 virtual void accept(GeoEntityVisitor &v) const override { v.visit(*this); }
-
-                virtual std::vector<Coordinate> lineTangentPointsOnEntity(const lc::geo::Coordinate& extPoint) override;
 
             private:
                 friend std::ostream& operator<<(std::ostream& os, const Circle& c) {

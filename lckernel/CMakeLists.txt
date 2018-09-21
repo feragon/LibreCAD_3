@@ -39,12 +39,13 @@ cad/geometry/geobeziercubic.cpp
 cad/math/lcmath.cpp
 cad/math/equation.cpp
 cad/math/intersectionhandler.cpp
+cad/math/tangent.cpp
 cad/meta/layer.cpp
 cad/meta/icolor.cpp
 cad/meta/metalinewidth.cpp
 cad/meta/dxflinepattern.cpp
-        cad/operations/entitybuilder.cpp
-        cad/operations/entityops.cpp
+cad/operations/entitybuilder.cpp
+cad/operations/entityops.cpp
 cad/operations/documentoperation.cpp
 cad/operations/layerops.cpp
 cad/operations/linepatternops.cpp
@@ -108,7 +109,7 @@ cad/events/removelinepatternevent.h
 cad/events/replaceentityevent.h
 cad/events/replacelayerevent.h
 cad/events/replacelinepatternevent.h
-        cad/functions/intersect.h
+cad/functions/intersect.h
 cad/geometry/geobase.h
 cad/geometry/geocoordinate.h
 cad/geometry/geoarc.h
@@ -133,8 +134,9 @@ cad/meta/metacolor.h
 cad/meta/layer.h
 cad/meta/metalinewidth.h
 cad/meta/dxflinepattern.h
-        cad/operations/entitybuilder.h
-        cad/operations/entityops.h
+cad/math/tangent.h
+cad/operations/entitybuilder.h
+cad/operations/entityops.h
 cad/operations/documentoperation.h
 cad/operations/layerops.h
 cad/operations/undoable.h
@@ -178,7 +180,7 @@ cad/primitive/customentity.h
 cad/events/newwaitingcustomentityevent.h
 cad/dochelpers/documentlist.h
 cad/interface/unmanageddraggable.h
-        cad/interface/tangentable.h)
+)
 
 # LOG4CXX
 find_package(Log4CXX 1.10 REQUIRED)
