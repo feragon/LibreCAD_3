@@ -41,6 +41,7 @@ lckernel/geometry/testgeoarc.cpp
 lckernel/geometry/testgeocircle.cpp
 lckernel/functions/testintersect.cpp
 lckernel/math/testmatrices.cpp
+lckernel/math/testtangent.cpp
 lckernel/geometry/beziertest.cpp
 lcviewernoqt/testselection.cpp
 lckernel/meta/customentitystorage.cpp
