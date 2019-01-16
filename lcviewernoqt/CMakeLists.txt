@@ -119,6 +119,11 @@ include_directories(${GDK-PIXBUF_INCLUDE_DIRS})
 find_package(GDK REQUIRED)
 include_directories(${GDK_INCLUDE_DIRS})
 
+#GLib
+set(GLIB_FIND_COMPONENTS gobject)
+find_package(GLib REQUIRED)
+include_directories(${GLIB_INCLUDE_DIRS})
+
 # BUILDING CONFIG
 # SEPARATE BUILDING FLAG
 set(SEPARATE_BUILD OFF)
@@ -134,4 +139,4 @@ else ()
 endif ()
 
 add_library(lcviewernoqt SHARED ${viewer_srcs} ${viewer_hdrs})
-target_link_libraries(lcviewernoqt ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${GDK-PIXBUF_LIBRARIES} ${GDK_LIBRARIES} lckernel)
+target_link_libraries(lcviewernoqt ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${GDK-PIXBUF_LIBRARIES} ${GDK_LIBRARIES} ${GLIB_GOBJECT_LIBRARIES} ${GLIB_LIBRARIES} lckernel)
