@@ -171,8 +171,9 @@ cd build
 mingw32-make
 ```
 
-Add each filder containing .dll files (including /mingw64/bin) to %PATH%.
+Add each folder containing .dll files (including /mingw64/bin) to %PATH%.
 
+If LibreCAD can't find a library named `?`, you need to use `ntdll` (`mingw-w64-x86_64-ntdll`) to check for each missing librecad missing dll dependency, recursively.
 
 Reading materials for feature usage
 =========
