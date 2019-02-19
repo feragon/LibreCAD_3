@@ -31,67 +31,18 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
+
 cache: ccache
 
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-
 script:
-  - mkdir -p third_party
-  - cd third_party
-  - mkdir -p gtest_build
-  - cd gtest_build
-  - cmake /usr/src/gtest
-  - make -j2
-  - cd ..
-  - git clone https://github.com/rvt/libdxfrw.git libdxfrw
-  - cd libdxfrw
-  - cmake .
-  - make -j2
-  - cd ../..
-  - mkdir -p build
-  - cd build
-  - cmake -DRUN_CLANG_TIDY_PY=/usr/bin/run-clang-tidy-6.0.py -DCHECKS_SOURCE_BRANCH=${TRAVIS_BRANCH} ..
-  - make -j2
-  - |
-    if [[ $TRAVIS_TEST_RESULT != 0 ]]; then
-      echo "Compilation failed"
-      cat stylecheck.out
-      exit 1;
-    fi
+  - ./scripts/travis.sh
 
-  - ./unittest/lcunittest
-
-  - |
-    if [[ $TRAVIS_EVENT_TYPE == "pull_request" ]]; then
-      echo "Doing partial style check"
-      make diffstylecheck > stylecheck.out
-    else 
-      make stylecheck > stylecheck.out
-    fi
-
-  - |
-    if [[ -n $(grep "warning: " stylecheck.out) ]] || [[ -n $(grep "error: " stylecheck.out) ]]; then
-      echo "Style checks failed"
-      echo ""
-      exit 1;
-    else
-      echo -e "\033[1;32m\xE2\x9C\x93 passed:\033[0m $1";
-    fi
-
-  - cat stylecheck.out
-
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#librecad"
-    template:
-      - "%{repository_slug} (%{commit}) : %{commit_message} %{result}"
-      - "Build details: %{build_url}"
-    on_success: always
-    on_failure: always
+#notifications:
+#  irc:
+#    channels:
+#      - "chat.freenode.net#librecad"
+#    template:
+#      - "%{repository_slug} (%{commit}) : %{commit_message} %{result}"
+#      - "Build details: %{build_url}"
+#    on_success: always
+#    on_failure: always
