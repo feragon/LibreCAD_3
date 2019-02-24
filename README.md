@@ -129,6 +129,8 @@ cd ~
 git clone --recursive https://github.com/LibreCAD/LibreCAD_3.git
 ```
 
+You may need to restart MSYS2 here, to ensure every executable is accessible in `PATH`.
+
 #### libdxfrw:
 ```
 git clone https://github.com/LibreCAD/libdxfrw.git LibreCAD_3/third_party/libdxfrw
@@ -153,15 +155,17 @@ cd ~/LibreCAD_3
 mkdir build
 cd build
 
+# You have to add -Wno-attributes in C/CXX flags to prevent a lot of warnings: #https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89325
+
 /mingw64/bin/cmake \
     -G "MSYS Makefiles" \
     -DCMAKE_C_COMPILER=/mingw64/bin/gcc.exe \
     -DCMAKE_CXX_COMPILER=/mingw64/bin/g++.exe \
     -DCMAKE_AR=/mingw64/bin/ar.exe \
     -DCMAKE_MAKE_PROGRAM=/mingw64/bin/mingw32-make.exe \
-    -DCMAKE_C_FLAGS=-Wa,-mbig-obj \
-    -DCMAKE_CXX_FLAGS=-Wa,-mbig-obj \
-    -DLIBDXFRW_PATH=~/LibreCAD_3/third_party/libdxfrw/build \
+    -DCMAKE_C_FLAGS="-Wa,-mbig-obj, -Wno-attributes" \
+    -DCMAKE_CXX_FLAGS="-Wa,-mbig-obj -Wno-attributes" \
+    -DLIBDXFRW_PATH=../third_party/libdxfrw/build \
     -DWITH_LIBOPENCAD=OFF \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_FIND_LIBRARY_SUFFIXES=".dll.a" \
